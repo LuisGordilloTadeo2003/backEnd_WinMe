@@ -1,0 +1,83 @@
+models:
+  # user:
+  #   name: string:255
+  #   email: string:255
+  #   password: string:255
+  #   avatar: string:255
+  #   registrationDate: timestamp
+  #   relationships:
+  #     hasMany: betRecord, bet, validation, betUser
+  #     belongsToMany: betOptions
+
+  Group:
+    name: string:255
+    description: text
+    creationDate: timestamp
+    creatorId: integer
+    relationships:
+      hasMany: Bet
+      belongsToMany: User
+
+  BetCategory:
+    name: string:255
+    description: text
+    relationships:
+      belongsTo: Bet
+
+  Bet:
+    groupId: integer
+    creatorId: integer
+    categoryId: integer
+    name: string:255
+    description: text
+    totalAmount: integer
+    startDate: timestamp
+    endDate: timestamp
+    status: enum('active', 'completed', 'canceled')
+    relationships:
+      hasOne: betCategory
+      belongsTo: Group, User
+      hasMany: BetEvent, BetOptions, BetUser
+
+  BetUser:
+    betId: integer
+    userId: integer
+    amount: integer
+    relationships:
+      belongsTo: Bet, User
+
+  BetOptions:
+    betId: integer
+    userId: integer
+    description: text
+    relationships:
+      belongsTo: Bet
+      belongsToMany: User
+
+  BetEvent:
+    betId: integer
+    name: string:255
+    description: text
+    eventDate: timestamp
+    status: enum('pending', 'validated', 'rejected')
+    relationships:
+      belongsTo: Bet
+      hasMany: BetRecord
+
+  BetRecord:
+    eventId: integer
+    userId: integer
+    action: enum('report', 'correct', 'finalize')
+    value: string:255
+    date: timestamp
+    relationships:
+      belongsTo: BetEvent, User
+      hasMany: Validation
+
+  Validation:
+    recordId: integer
+    validatorId: integer
+    status: enum('accepted', 'rejected')
+    date: timestamp
+    relationships:
+      belongsTo: BetRecord, User

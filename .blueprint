@@ -1,0 +1,44 @@
+created:
+    - database/factories/GroupFactory.php
+    - database/factories/BetCategoryFactory.php
+    - database/factories/BetFactory.php
+    - database/factories/BetUserFactory.php
+    - database/factories/BetOptionsFactory.php
+    - database/factories/BetEventFactory.php
+    - database/factories/BetRecordFactory.php
+    - database/factories/ValidationFactory.php
+    - database/migrations/2025_02_26_133859_create_groups_table.php
+    - database/migrations/2025_02_26_133900_create_bet_categories_table.php
+    - database/migrations/2025_02_26_133901_create_bets_table.php
+    - database/migrations/2025_02_26_133902_create_bet_users_table.php
+    - database/migrations/2025_02_26_133903_create_bet_options_table.php
+    - database/migrations/2025_02_26_133904_create_bet_events_table.php
+    - database/migrations/2025_02_26_133905_create_bet_records_table.php
+    - database/migrations/2025_02_26_133906_create_validations_table.php
+    - database/migrations/2025_02_26_133907_create_group_user_table.php
+    - database/migrations/2025_02_26_133908_create_bet_options_user_table.php
+    - app/Models/Group.php
+    - app/Models/BetCategory.php
+    - app/Models/Bet.php
+    - app/Models/BetUser.php
+    - app/Models/BetOptions.php
+    - app/Models/BetEvent.php
+    - app/Models/BetRecord.php
+    - app/Models/Validation.php
+models:
+    group: { name: 'string:255', description: text, creationDate: timestamp, creatorId: integer, relationships: { hasMany: bet, belongsToMany: user } }
+    betCategory: { name: 'string:255', description: text, relationships: { belongsTo: bet } }
+    bet: { groupId: integer, creatorId: integer, categoryId: integer, name: 'string:255', description: text, totalAmount: integer, startDate: timestamp, endDate: timestamp, status: "enum('active', 'completed', 'canceled')", relationships: { hasOne: betCategory, belongsTo: 'group, user', hasMany: 'betEvent, betOptions, betUser' } }
+    betUser: { betId: integer, userId: integer, amount: integer, relationships: { belongsTo: 'bet, user' } }
+    betOptions: { betId: integer, userId: integer, description: text, relationships: { belongsTo: bet, belongsToMany: user } }
+    betEvent: { betId: integer, name: 'string:255', description: text, eventDate: timestamp, status: "enum('pending', 'validated', 'rejected')", relationships: { belongsTo: bet, hasMany: betRecord } }
+    betRecord: { eventId: integer, userId: integer, action: "enum('report', 'correct', 'finalize')", value: 'string:255', date: timestamp, relationships: { belongsTo: 'betEvent, user', hasMany: validation } }
+    validation: { recordId: integer, validatorId: integer, status: "enum('accepted', 'rejected')", date: timestamp, relationships: { belongsTo: 'betRecord, user' } }
+    Group: { name: 'string:255', description: text, creationDate: timestamp, creatorId: integer, relationships: { hasMany: Bet, belongsToMany: User } }
+    BetCategory: { name: 'string:255', description: text, relationships: { belongsTo: Bet } }
+    Bet: { groupId: integer, creatorId: integer, categoryId: integer, name: 'string:255', description: text, totalAmount: integer, startDate: timestamp, endDate: timestamp, status: "enum('active', 'completed', 'canceled')", relationships: { hasOne: betCategory, belongsTo: 'Group, User', hasMany: 'BetEvent, BetOptions, BetUser' } }
+    BetUser: { betId: integer, userId: integer, amount: integer, relationships: { belongsTo: 'Bet, User' } }
+    BetOptions: { betId: integer, userId: integer, description: text, relationships: { belongsTo: Bet, belongsToMany: User } }
+    BetEvent: { betId: integer, name: 'string:255', description: text, eventDate: timestamp, status: "enum('pending', 'validated', 'rejected')", relationships: { belongsTo: Bet, hasMany: BetRecord } }
+    BetRecord: { eventId: integer, userId: integer, action: "enum('report', 'correct', 'finalize')", value: 'string:255', date: timestamp, relationships: { belongsTo: 'BetEvent, User', hasMany: Validation } }
+    Validation: { recordId: integer, validatorId: integer, status: "enum('accepted', 'rejected')", date: timestamp, relationships: { belongsTo: 'BetRecord, User' } }
